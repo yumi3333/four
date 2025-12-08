@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数据可视化交互平台</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+</head>
+<body>
+    <!-- 主容器 -->
+    <div class="app-container">
+        <!-- 顶部导航区域 -->
+        <header class="app-header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <h1 class="main-title">数据可视化交互平台</h1>
+                    <p class="subtitle">探索数据的魅力与价值</p>
+                </div>
+
+                <!-- 主题控制 -->
+                <div class="theme-controls">
+                    <button class="theme-btn theme-icon-btn" data-theme="light" style="background: linear-gradient(135deg, #ffffff, #f3f4f6); color: #333;">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="5"/>
+                            <line x1="12" y1="1" x2="12" y2="3"/>
+                            <line x1="12" y1="21" x2="12" y2="23"/>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                            <line x1="1" y1="12" x2="3" y2="12"/>
+                            <line x1="21" y1="12" x2="23" y2="12"/>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                        </svg>
+                    </button>
+                    <button class="theme-btn theme-icon-btn" data-theme="dark" style="background: linear-gradient(135deg, #1f2937, #111827); color: #f9fafb;">
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主要内容区域 -->
+        <main class="app-main">
+            <div class="main-content">
+                <!-- 1. 图表样式控制区域 -->
+                <div class="chart-controls-section">
+                    <!-- 图表样式控制 -->
+                    <div class="chart-options-inline">
+                        <h4 class="section-title">图表样式</h4>
+                        <div class="options-row">
+                            <!-- 图表类型选择 -->
+                            <div class="option-group">
+                                <label>图表类型</label>
+                                <select id="chart-type" class="select-input">
+                                    <option value="bar">柱状图</option>
+                                    <option value="line">折线图</option>
+                                    <option value="pie">饼图</option>
+                                    <option value="doughnut">环形图</option>
+                                    <option value="radar">雷达图</option>
+                                </select>
+                            </div>
+
+                            <!-- 配色方案选择 -->
+                            <div class="option-group">
+                                <label>配色方案</label>
+                                <select id="color-scheme" class="select-input">
+                                    <option value="default">默认配色</option>
+                                    <option value="morandi">莫兰迪色系</option>
+                                    <option value="glacier">冰川色系</option>
+                                    <option value="sunset">日落色系</option>
+                                    <option value="forest">森林色系</option>
+                                    <option value="lavender">薰衣草色系</option>
+                                </select>
+                            </div>
+
+                            <!-- 动画速度 -->
+                            <div class="option-group">
+                                <label>动画速度</label>
+                                <select id="animation-speed" class="select-input">
+                                    <option value="0">无动画</option>
+                                    <option value="500">快速</option>
+                                    <option value="1000" selected>标准</option>
+                                    <option value="2000">慢速</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="options-row">
+                            <!-- 显示选项 -->
+                            <div class="option-group">
+                                <label>显示选项</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="show-legend" checked> 显示图例
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="show-grid" checked> 显示网格
+                                    </label>
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="show-datalabels"> 显示数据标签
+                                    </label>
+                                </div>
+                            </div>
+
+                            <!-- 操作按钮 -->
+                            <div class="option-group">
+                                <label>操作</label>
+                                <div class="button-group">
+                                    <button class="btn btn-primary" id="download-chart">下载图表</button>
+                                    <button class="btn btn-secondary" id="fullscreen">全屏显示</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. 图表容器 -->
+                <div class="chart-container">
+                    <canvas id="mainChart"></canvas>
+                </div>
+
+                <!-- 3. 统计信息（数据总量、平均值、最大值、最小值） -->
+                <div class="stats-container">
+                    <div class="stat-item">
+                        <span class="stat-label">数据总量</span>
+                        <span class="stat-value" id="total-stat">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">平均值</span>
+                        <span class="stat-value" id="average-stat">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">最大值</span>
+                        <span class="stat-value" id="max-stat">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">最小值</span>
+                        <span class="stat-value" id="min-stat">0</span>
+                    </div>
+                </div>
+
+                <!-- 4. 图表说明区域 -->
+                <section class="chart-description">
+                    <h3>📊 图表说明</h3>
+                    <div class="description-content">
+                        <h4 id="current-chart-title">图书采购分析</h4>
+                        <p id="current-chart-description">展示不同地区在各类图书采购中的对比情况，帮助分析采购偏好和市场趋势。</p>
+                    </div>
+                </section>
+
+                <!-- 5. 数据面板（表格） -->
+                <div class="data-panel-section">
+                    <h3>📋 数据面板</h3>
+                    
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <!-- 数据集切换标签 -->
+                            <div class="dataset-tabs">
+                                <button class="dataset-tab active" data-dataset="books">图书采购分析</button>
+                                <button class="dataset-tab" data-dataset="exchange">汇率走势</button>
+                                <button class="dataset-tab" data-dataset="sales">销售数据</button>
+                                <button class="dataset-tab" data-dataset="users">用户分布</button>
+                            </div>
+                            
+                            <!-- 操作按钮 -->
+                            <div class="data-actions">
+                                <button class="btn btn-icon btn-small" id="edit-data-btn" title="编辑数据">
+                                    <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="data-table-content" id="data-table">
+                            <!-- 数据表格将通过JavaScript动态生成 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- 底部版权信息 -->
+        <footer class="app-footer">
+            <p>数据可视化交互平台</p>
+        </footer>
+    </div>
+
+    <!-- 数据编辑模态框 -->
+    <div class="modal" id="data-edit-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑数据</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="data-edit-form">
+                    <!-- 数据编辑表单将通过JavaScript动态生成 -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="save-changes">应用更改</button>
+                <button class="btn btn-secondary" id="cancel-edit">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
